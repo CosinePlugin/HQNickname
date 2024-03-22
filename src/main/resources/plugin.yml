@@ -1,0 +1,10 @@
+name: HQNickname
+main: kr.cosine.nickname.HQNickname
+version: 1.0.0
+api-version: 1.13
+author: Cosine_A
+website: https://github.com/CosinePlugin/HQNickname
+
+commands:
+  닉네임관리:
+    permission: op
