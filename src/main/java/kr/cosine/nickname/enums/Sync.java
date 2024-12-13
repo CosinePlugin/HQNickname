@@ -11,10 +11,7 @@ public enum Sync {
     public static void syncAll(Player player, String nickname) {
         for (Sync sync : values) {
             if (sync.isSync) {
-                System.out.println(sync + " 적용");
                 sync.syncAction.sync(player, nickname);
-            } else {
-                System.out.println(sync + " 미적용");
             }
         }
     }
@@ -28,7 +25,6 @@ public enum Sync {
     }
 
     public void setSync(boolean isSync) {
-        System.out.println(this + " : " + isSync);
         this.isSync = isSync;
     }
 

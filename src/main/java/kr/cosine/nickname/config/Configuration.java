@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.IOException;
 
 public abstract class Configuration {
-
     protected final String rootSectionKey;
 
     protected final File file;

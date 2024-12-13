@@ -1,50 +1,42 @@
 package kr.cosine.nickname.service;
 
-import kr.cosine.nickname.config.impl.NicknameConfig;
 import kr.cosine.nickname.config.impl.SettingConfig;
 import kr.cosine.nickname.enums.Sync;
+import kr.cosine.nickname.json.NicknameJson;
 import kr.cosine.nickname.registry.NicknameRegistry;
 import org.bukkit.Server;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 public class NicknameService {
-
     private final Plugin plugin;
     private final Server server;
 
     private final NicknameRegistry nicknameRegistry;
 
     private final SettingConfig settingConfig;
-    private final NicknameConfig nicknameConfig;
-
-    private final Class<?> craftPlayerClass;
+    private final NicknameJson nicknameJson;
 
     public NicknameService(
         Plugin plugin,
         NicknameRegistry nicknameRegistry,
         SettingConfig settingConfig,
-        NicknameConfig nicknameConfig
+        NicknameJson nicknameJson
     ) {
         this.plugin = plugin;
         this.server = plugin.getServer();
         this.nicknameRegistry = nicknameRegistry;
         this.settingConfig = settingConfig;
-        this.nicknameConfig = nicknameConfig;
-        try {
-            String version = server.getClass().getName().replace(".", ",").split(",")[3];
-            craftPlayerClass = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        this.nicknameJson = nicknameJson;
     }
 
     public boolean isNickname(String nickname) {
         return nicknameRegistry.isNickname(nickname);
+    }
+
+    public boolean hasNickname(Player player) {
+        return nicknameRegistry.hasNickname(player.getUniqueId());
     }
 
     public void setNickname(Player player, String nickname) {
@@ -52,8 +44,12 @@ public class NicknameService {
         applyNickname(player);
     }
 
+    public void removeNickname(Player player) {
+        nicknameRegistry.removeNickname(player.getUniqueId());
+    }
+
     public void save() {
-        server.getScheduler().runTaskAsynchronously(plugin, nicknameConfig::save);
+        server.getScheduler().runTaskAsynchronously(plugin, nicknameJson::save);
     }
 
     public void reload() {
@@ -77,13 +73,11 @@ public class NicknameService {
 
     private void setGameProfileNickname(Player player, String nickname) {
         try {
-            Object craftPlayer = craftPlayerClass.cast(player);
-            Method method = craftPlayerClass.getMethod("getProfile");
-            Object gameProfile = method.invoke(craftPlayer);
-            Field field = gameProfile.getClass().getDeclaredField("name");
+            var gameProfile = ((CraftPlayer) player).getProfile();
+            var field = gameProfile.getClass().getDeclaredField("name");
             field.setAccessible(true);
             field.set(gameProfile, nickname);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | NoSuchFieldException e) {
+        } catch (IllegalAccessException | NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
     }

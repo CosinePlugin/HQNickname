@@ -10,7 +10,6 @@ import org.bukkit.plugin.Plugin;
 import java.util.function.BiConsumer;
 
 public class SettingConfig extends Configuration {
-
     private final NicknameSettingRegistry nicknameSettingRegistry;
 
     public SettingConfig(Plugin plugin, NicknameSettingRegistry nicknameSettingRegistry) {

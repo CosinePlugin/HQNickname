@@ -9,7 +9,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class NicknameListener implements Listener {
-
     private final NicknameService nicknameService;
 
     public NicknameListener(NicknameService nicknameService) {

@@ -1,7 +1,6 @@
 package kr.cosine.nickname.registry;
 
 public class NicknameSettingRegistry {
-
     private String regex = "^[a-zA-Z0-9_가-힣]*$";
 
     private int minLength = 2;
